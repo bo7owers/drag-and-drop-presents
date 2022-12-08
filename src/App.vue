@@ -6,14 +6,13 @@ import { ref } from 'vue'
 const presents = ref(['small-red-gift', 'blue-gift', 'tall-red-gift'])
 const underTheTree = ref([''])
 
-const startDrag = (e, index) => {
-  console.log(index)
+const startDrag = (e: any, index: number) => {
   e.dataTransfer.dropEffect = 'move'
   e.dataTransfer.effectAllowed = 'move'
-  e.dataTransfer.setData('index', index.id)
+  e.dataTransfer.setData('index', index)
 }
 
-const onDrop = e => {
+const onDrop = (e: any) => {
   const index = e.dataTransfer.getData('index')
   underTheTree.value.push(presents.value[index])
   presents.value.splice(index, 1)
@@ -24,7 +23,7 @@ const onDrop = e => {
   <div class="flex flex-col items-center mt-24 min-h-screen w-full">
     <h1 class="mt-8 text-xl font-bold">Drag the presents under the tree!</h1>
     <!-- TODO: make ChristmasTree our drop zone! -->
-    <ChristmasTree :presents="underTheTree" class="mt-16" />
+    <ChristmasTree :presents="underTheTree" class="mt-16" @drop="onDrop" @dragenter.prevent @dragover.prevent />
     <div class="pt-32 mt-32 bg-gray-100 w-full justify-center flex-1">
       <div class="flex items-end justify-center" v-auto-animate>
         <!-- TODO: make each present draggable -->
@@ -32,8 +31,9 @@ const onDrop = e => {
           v-for="(p, index) in presents"
           :key="p"
           :name="p"
+          :id="p"
           draggable="true"
-          @dragstart="startDrag($event, p)"
+          @dragstart="startDrag($event, index)"
         />
       </div>
     </div>
