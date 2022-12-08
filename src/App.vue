@@ -4,14 +4,19 @@ import ChristmasTree from './components/ChristmasTree.vue'
 import { ref } from 'vue'
 
 const presents = ref(['small-red-gift', 'blue-gift', 'tall-red-gift'])
-const underTheTree = ref([])
+const underTheTree = ref([''])
 
-const startDrag = (evt, index) => {
-  // TODO
+const startDrag = (e, index) => {
+  console.log(index)
+  e.dataTransfer.dropEffect = 'move'
+  e.dataTransfer.effectAllowed = 'move'
+  e.dataTransfer.setData('index', index.id)
 }
 
-const onDrop = evt => {
-  // TODO
+const onDrop = e => {
+  const index = e.dataTransfer.getData('index')
+  underTheTree.value.push(presents.value[index])
+  presents.value.splice(index, 1)
 }
 </script>
 
@@ -23,7 +28,13 @@ const onDrop = evt => {
     <div class="pt-32 mt-32 bg-gray-100 w-full justify-center flex-1">
       <div class="flex items-end justify-center" v-auto-animate>
         <!-- TODO: make each present draggable -->
-        <ChristmasPresent v-for="(p, index) in presents" :key="p" :name="p" />
+        <ChristmasPresent
+          v-for="(p, index) in presents"
+          :key="p"
+          :name="p"
+          draggable="true"
+          @dragstart="startDrag($event, p)"
+        />
       </div>
     </div>
   </div>
